@@ -1,0 +1,64 @@
+---
+import { getCollection } from "astro:content";
+import Layout from "../../components/Layout.astro";
+import { Image } from "astro:assets";
+import { getEntry } from "astro:content";
+
+export const getStaticPaths = async () => {
+  const galleryEntries = await getCollection("gallery");
+  return galleryEntries.map((galleryEntry, index) => ({
+    params: {
+      slug: galleryEntry.slug,
+    },
+    props: {
+      previousEntrySlug: index > 0 ? galleryEntries[index - 1].slug : null,
+      nextEntrySlug:
+        index < galleryEntries.length - 1
+          ? galleryEntries[index + 1].slug
+          : null,
+    },
+  }));
+};
+
+const { slug } = Astro.params;
+const { previousEntrySlug, nextEntrySlug } = Astro.props;
+
+const currentEntry = await getEntry("gallery", slug);
+const renderedEntry = await currentEntry.render();
+---
+
+<Layout title="A specific image" preview={currentEntry.data.src.src}>
+  <Image src={currentEntry.data.src} alt={currentEntry.data.alt} />
+  <renderedEntry.Content />
+  <nav>
+    <a
+      href={`/gallery/${previousEntrySlug}`}
+      class:list={{ hidden: !previousEntrySlug }}>Previous</a
+    >
+    <a
+      href={`/gallery/${nextEntrySlug}`}
+      class:list={{ hidden: !nextEntrySlug }}
+    >
+      Next
+    </a>
+  </nav>
+</Layout>
+
+<style>
+  img {
+    max-height: 300px;
+    width: auto;
+  }
+  nav {
+    display: flex;
+    justify-content: space-between;
+    max-width: 300px;
+    width: 100%;
+  }
+  :global(p) {
+    max-width: 300px;
+  }
+  .hidden {
+    visibility: hidden;
+  }
+</style>

@@ -1,0 +1,37 @@
+---
+import { getCollection } from "astro:content";
+import Layout from "../../components/Layout.astro";
+import { Image } from "astro:assets";
+
+const gallery = await getCollection("gallery");
+---
+
+<Layout title="A gallery of art" description="This is a gallery with some art">
+  <section>
+    <h1>Gallery</h1>
+    <div>Some art from around the FujoVerse</div>
+    <ul class="gallery">
+      {
+        gallery.map(async (galleryEntry) => {
+          return (
+            <li>
+              <a href={`/gallery/${galleryEntry.slug}`}>
+                <Image
+                  src={galleryEntry.data.src}
+                  alt={galleryEntry.data.alt}
+                />
+              </a>
+            </li>
+          );
+        })
+      }
+    </ul>
+  </section>
+</Layout>
+
+<style>
+  .gallery img {
+    max-width: 300px;
+    height: auto;
+  }
+</style>

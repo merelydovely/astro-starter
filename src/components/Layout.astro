@@ -1,0 +1,57 @@
+---
+interface Props {
+  title: string;
+  preview?: string;
+  description?: string;
+}
+
+const {
+  title,
+  description = "Starter for a simple fannish website",
+  preview = "/og-image.png",
+} = Astro.props;
+
+const currentPath = Astro.url.pathname;
+---
+
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>{title}</title>
+    <meta property="og:title" content={title} />
+    <meta property="twitter:title" content={title} />
+
+    <meta name="description" content={description} />
+    <meta property="og:description" content={description} />
+    <meta property="twitter:description" content={description} />
+
+    <meta property="og:image" content={preview} />
+    <meta name="twitter:image" content={preview} />
+
+    <meta property="twitter:card" content="summary_large_image" />
+
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="icon" href="/icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="icon.png" />
+  </head>
+  <body>
+    <nav>
+      <ul>
+        <li class:list={{ current: currentPath == "/" }}>
+          <a href="/">Home</a>
+        </li>
+        <li class:list={{ current: currentPath.startsWith("/gallery") }}>
+          <a href="/gallery">Gallery</a>
+        </li>
+      </ul>
+    </nav>
+    <main>
+      <slot />
+    </main>
+  </body>
+</html>
+
+<style></style>

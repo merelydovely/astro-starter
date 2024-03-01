@@ -1,0 +1,56 @@
+---
+import { getCollection } from "astro:content";
+
+interface Props {
+  chronological?: "ascending" | "descending";
+}
+
+const { chronological } = Astro.props;
+
+const updates = await getCollection("updates");
+const sortedUpdates = updates.sort((update1, update2) => {
+  return chronological == "ascending"
+    ? update1.data.created_at.getTime() - update2.data.created_at.getTime()
+    : update2.data.created_at.getTime() - update1.data.created_at.getTime();
+});
+---
+
+<ul>
+  {
+    sortedUpdates.map(async (update) => {
+      const renderedUpdate = await update.render();
+      return (
+        <li>
+          <div class="title" set:html={update.data.title} />
+          <datetime time={update.data.created_at.toISOString()}>
+            {update.data.created_at.toLocaleDateString("en-EN", {
+              weekday: "long",
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+            })}
+          </datetime>
+          <div class="body">
+            <renderedUpdate.Content />
+          </div>
+          <div class="tags">
+            Tags:
+            <ul>
+              {update.data.tags.map((tag) => (
+                <li>{tag}</li>
+              ))}
+            </ul>
+          </div>
+        </li>
+      );
+    })
+  }
+</ul>
+
+<style>
+  ul:not(.tags) {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+</style>

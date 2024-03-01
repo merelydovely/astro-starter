@@ -1,0 +1,16 @@
+---
+import Layout from "../components/Layout.astro";
+import Updates from "../components/Updates.astro";
+---
+
+<Layout title="Welcome to my page">
+  <section>
+    <h1>Welcome</h1>
+    <div>This is a sample page</div>
+  </section>
+  <section>
+    <h2>Using a component</h2>
+    <div>Here we made a component to display updates</div>
+    <Updates chronological="ascending" />
+  </section>
+</Layout>
